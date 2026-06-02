@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import VoiceReport from './VoiceReport.jsx'
 import './Safety.css'
 
 const ROUTE = {
@@ -134,7 +135,13 @@ function VideoIcon() {
 function Safety() {
   const navigate = useNavigate()
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [voiceOpen, setVoiceOpen] = useState(false)
   const [selected, setSelected] = useState(null)
+
+  const handleOption = (id) => {
+    setSheetOpen(false)
+    if (id === 'voice') setVoiceOpen(true)
+  }
 
   useEffect(() => {
     if (!sheetOpen) return
@@ -351,7 +358,7 @@ function Safety() {
             <ul className="sheet__list">
               {REPORT_OPTIONS.map(({ id, title, sub, icon: Icon }) => (
                 <li key={id}>
-                  <button type="button" className="opt" onClick={() => setSheetOpen(false)}>
+                  <button type="button" className="opt" onClick={() => handleOption(id)}>
                     <span className="opt__icon">
                       <Icon />
                     </span>
@@ -373,6 +380,8 @@ function Safety() {
           </div>
         </div>
       )}
+
+      <VoiceReport open={voiceOpen} onClose={() => setVoiceOpen(false)} />
     </div>
   )
 }
