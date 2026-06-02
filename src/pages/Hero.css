@@ -6,73 +6,7 @@
   padding: 28px clamp(20px, 4vw, 56px) clamp(36px, 6vh, 72px);
   overflow: hidden;
   isolation: isolate;
-
-  /* Dusk-highway backdrop. Replace with a real photo by dropping it into
-     /public (e.g. /hero.jpg) and adding url('/hero.jpg') as the first layer. */
-  background-color: #07070b;
-  background-image:
-    radial-gradient(
-      ellipse 55% 28% at 50% 56%,
-      rgba(235, 150, 70, 0.4),
-      transparent 70%
-    ),
-    linear-gradient(
-      to bottom,
-      #16345f 0%,
-      #1d3c69 26%,
-      #394056 48%,
-      #1b1922 64%,
-      #07070b 100%
-    );
-  background-size: cover;
-  background-position: center;
-}
-
-/* darken slightly for text contrast */
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.15),
-    rgba(0, 0, 0, 0) 35%,
-    rgba(0, 0, 0, 0.35)
-  );
-}
-
-/* corner brackets */
-.corner {
-  position: absolute;
-  width: 34px;
-  height: 34px;
-  border: 2px solid rgba(255, 255, 255, 0.55);
-  z-index: 2;
-}
-.corner--tl {
-  top: 18px;
-  left: 18px;
-  border-right: none;
-  border-bottom: none;
-}
-.corner--tr {
-  top: 18px;
-  right: 18px;
-  border-left: none;
-  border-bottom: none;
-}
-.corner--bl {
-  bottom: 18px;
-  left: 18px;
-  border-right: none;
-  border-top: none;
-}
-.corner--br {
-  bottom: 18px;
-  right: 18px;
-  border-left: none;
-  border-top: none;
+  background: #fff;
 }
 
 /* top bar */
@@ -88,20 +22,10 @@
   align-items: center;
   gap: 12px;
 }
-.brand__badge {
-  display: grid;
-  place-items: center;
-  width: 34px;
+.brand__logo {
   height: 34px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(4px);
-  color: #cdd6ff;
-}
-.brand__name {
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: 0.2px;
+  width: auto;
+  display: block;
 }
 
 /* buttons */
@@ -112,14 +36,14 @@
   border: none;
   cursor: pointer;
   font-family: inherit;
-  font-weight: 600;
-  color: var(--ink);
-  background: var(--cream);
+  font-weight: 700;
+  color: var(--lime);
+  background: var(--green);
   border-radius: 999px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 .btn:hover {
-  background: var(--cream-hover);
+  background: var(--green-hover);
   transform: translateY(-1px);
 }
 .btn--sm {
@@ -146,11 +70,15 @@
 .hero__title {
   font-family: 'Clash Display', sans-serif;
   font-weight: 600;
-  font-size: clamp(4rem, 21vw, 17rem);
-  line-height: 0.9;
+  font-size: clamp(2.75rem, 11vw, 9rem);
+  line-height: 0.95;
   letter-spacing: -0.02em;
   margin: 0;
-  color: rgba(255, 255, 255, 0.96);
+  max-width: 12ch;
+  color: var(--ink);
+}
+.hero__title .red {
+  color: #ca0d38;
 }
 
 .hero__lead {
@@ -159,10 +87,11 @@
   font-size: clamp(1.05rem, 1.6vw, 1.5rem);
   font-weight: 500;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(0, 0, 0, 0.7);
 }
 .accent {
-  color: var(--accent);
+  color: var(--green);
+  font-weight: 700;
 }
 
 .hero__tags {
@@ -171,11 +100,11 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(0, 0, 0, 0.45);
 }
 .hero__tags .dot {
   margin: 0 8px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 600px) {
