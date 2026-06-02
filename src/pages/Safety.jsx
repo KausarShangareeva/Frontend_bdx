@@ -79,7 +79,7 @@ const REPORT_OPTIONS = [
   {
     id: "voice",
     title: "Voice report",
-    sub: "Dictate hands-free with Siri",
+    sub: "AI converts speech into a structured report",
     icon: MicIcon,
   },
   {
