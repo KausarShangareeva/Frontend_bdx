@@ -1,4 +1,4 @@
-import './Safety.css'
+import "./Safety.css";
 
 function Safety() {
   return (
@@ -14,13 +14,22 @@ function Safety() {
 
       <button className="safety__btn">▶ Watch Instruction</button>
 
-      <div className="card">👁 Inspection Points</div>
+      <div className="card">
+        <h3>👁 Inspection Points</h3>
+        <p>Check machine safety points</p>
+      </div>
 
-      <div className="card">🌦 Weather Report</div>
+      <div className="card">
+        <h3>🌦 Weather Report</h3>
+        <p>Current weather conditions</p>
+      </div>
 
-      <div className="card">📸 Damage Report</div>
+      <div className="card">
+        <h3>📸 Damage Report</h3>
+        <p>Upload a photo for AI analysis</p>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Safety
+export default Safety;
