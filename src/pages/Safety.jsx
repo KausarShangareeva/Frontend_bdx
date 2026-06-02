@@ -77,8 +77,8 @@ const PARTS = {
 
 const REPORT_OPTIONS = [
   { id: 'voice', title: 'Voice report', sub: 'Dictate hands-free with Siri', icon: MicIcon },
-  { id: 'photo', title: 'Photo', sub: 'Capture a still image of the damage', icon: CameraIcon },
-  { id: 'video', title: 'Video', sub: 'Film a short clip of the damage', icon: VideoIcon },
+  { id: 'photo', title: 'Photo', sub: 'Capture a still image of the damage', icon: CameraIcon, accept: 'image/*' },
+  { id: 'video', title: 'Video', sub: 'Film a short clip of the damage', icon: VideoIcon, accept: 'video/*' },
 ]
 
 function BackIcon() {
@@ -136,11 +136,22 @@ function Safety() {
   const navigate = useNavigate()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [voiceOpen, setVoiceOpen] = useState(false)
+  const [media, setMedia] = useState(null)
   const [selected, setSelected] = useState(null)
 
-  const handleOption = (id) => {
+  const openVoice = (withMedia = null) => {
+    setMedia(withMedia)
     setSheetOpen(false)
-    if (id === 'voice') setVoiceOpen(true)
+    setVoiceOpen(true)
+  }
+
+  const onPickMedia = (e, type) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => openVoice({ url: reader.result, type })
+    reader.readAsDataURL(file)
   }
 
   useEffect(() => {
@@ -356,9 +367,9 @@ function Safety() {
             <p className="sheet__sub">Choose how to capture the damage</p>
 
             <ul className="sheet__list">
-              {REPORT_OPTIONS.map(({ id, title, sub, icon: Icon }) => (
-                <li key={id}>
-                  <button type="button" className="opt" onClick={() => handleOption(id)}>
+              {REPORT_OPTIONS.map(({ id, title, sub, icon: Icon, accept }) => {
+                const inner = (
+                  <>
                     <span className="opt__icon">
                       <Icon />
                     </span>
@@ -369,9 +380,29 @@ function Safety() {
                     <span className="opt__chev" aria-hidden="true">
                       →
                     </span>
-                  </button>
-                </li>
-              ))}
+                  </>
+                )
+                return (
+                  <li key={id}>
+                    {accept ? (
+                      <label className="opt">
+                        <input
+                          type="file"
+                          className="opt__file"
+                          accept={accept}
+                          capture="environment"
+                          onChange={(e) => onPickMedia(e, id === 'video' ? 'video' : 'photo')}
+                        />
+                        {inner}
+                      </label>
+                    ) : (
+                      <button type="button" className="opt" onClick={() => openVoice(null)}>
+                        {inner}
+                      </button>
+                    )}
+                  </li>
+                )
+              })}
             </ul>
 
             <button type="button" className="sheet__cancel" onClick={() => setSheetOpen(false)}>
@@ -381,7 +412,7 @@ function Safety() {
         </div>
       )}
 
-      <VoiceReport open={voiceOpen} onClose={() => setVoiceOpen(false)} />
+      <VoiceReport open={voiceOpen} media={media} onClose={() => setVoiceOpen(false)} />
     </div>
   )
 }

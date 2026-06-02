@@ -626,6 +626,9 @@
 .opt__icon svg {
   display: block;
 }
+.opt__file {
+  display: none;
+}
 .opt__text {
   display: flex;
   flex-direction: column;

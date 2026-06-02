@@ -21,12 +21,13 @@ function severityClass(sev) {
   return 'medium'
 }
 
-function VoiceReport({ open, onClose }) {
+function VoiceReport({ open, media = null, onClose }) {
   const [lang, setLang] = useState('en')
   const [recording, setRecording] = useState(false)
   const [rawText, setRawText] = useState('')
   const [structured, setStructured] = useState(null)
   const [result, setResult] = useState(null)
+  const [attachment, setAttachment] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const recognitionRef = useRef(null)
@@ -56,9 +57,15 @@ function VoiceReport({ open, onClose }) {
     setRawText('')
     setStructured(null)
     setResult(null)
+    setAttachment(null)
     setError('')
     setLoading(false)
   }, [open])
+
+  // when opened, pick up any media passed in from the action sheet
+  useEffect(() => {
+    if (open) setAttachment(media ?? null)
+  }, [open, media])
 
   // Esc to close + lock background scroll
   useEffect(() => {
@@ -127,11 +134,25 @@ function VoiceReport({ open, onClose }) {
     }
   }
 
+  const onAttach = (e, type) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => setAttachment({ url: reader.result, type })
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
     setError('')
     try {
-      const res = await submitReport(structured)
+      const payload = {
+        ...structured,
+        media_url: attachment?.url ?? '',
+        media_type: attachment?.type ?? 'photo',
+      }
+      const res = await submitReport(payload)
       setResult(res)
     } catch {
       setError('Could not submit the report — please retry.')
@@ -208,6 +229,8 @@ function VoiceReport({ open, onClose }) {
                 rows={4}
               />
 
+              <MediaBlock attachment={attachment} onAttach={onAttach} onRemove={() => setAttachment(null)} />
+
               <button
                 type="button"
                 className="vr__primary"
@@ -239,6 +262,19 @@ function VoiceReport({ open, onClose }) {
                   ) : null,
                 )}
               </dl>
+
+              {attachment && (
+                <div className="vr__mediaprev">
+                  {attachment.type === 'video' ? (
+                    <video className="vr__thumb" src={attachment.url} controls />
+                  ) : (
+                    <img className="vr__thumb" src={attachment.url} alt="Damage attachment" />
+                  )}
+                  <span className="vr__medialabel">
+                    {attachment.type === 'video' ? '🎥 Video attached' : '📷 Photo attached'}
+                  </span>
+                </div>
+              )}
 
               {Array.isArray(structured.missing_info) && structured.missing_info.length > 0 && (
                 <div className="vr__missing">
@@ -308,6 +344,38 @@ function VoiceReport({ open, onClose }) {
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+function MediaBlock({ attachment, onAttach, onRemove }) {
+  if (attachment) {
+    return (
+      <div className="vr__media">
+        {attachment.type === 'video' ? (
+          <video className="vr__thumb" src={attachment.url} controls />
+        ) : (
+          <img className="vr__thumb" src={attachment.url} alt="Damage attachment" />
+        )}
+        <span className="vr__medialabel">
+          {attachment.type === 'video' ? '🎥 Video attached' : '📷 Photo attached'}
+        </span>
+        <button type="button" className="vr__mediaremove" onClick={onRemove}>
+          Remove
+        </button>
+      </div>
+    )
+  }
+  return (
+    <div className="vr__attach">
+      <label className="vr__attachbtn">
+        <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => onAttach(e, 'photo')} />
+        📷 Add photo
+      </label>
+      <label className="vr__attachbtn">
+        <input type="file" accept="video/*" capture="environment" hidden onChange={(e) => onAttach(e, 'video')} />
+        🎥 Add video
+      </label>
     </div>
   )
 }

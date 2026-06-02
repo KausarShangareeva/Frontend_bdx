@@ -157,6 +157,74 @@
   border-color: var(--green);
 }
 
+/* media attach / preview */
+.vr__attach {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.vr__attachbtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 13px;
+  border: 1px dashed rgba(0, 0, 0, 0.22);
+  border-radius: 14px;
+  background: #fff;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.vr__attachbtn:hover {
+  border-color: var(--green);
+  background: #f7faf6;
+}
+.vr__media {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  background: #fafafa;
+}
+.vr__thumb {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #000;
+}
+.vr__medialabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+}
+.vr__mediaremove {
+  border: none;
+  background: none;
+  color: #c0314a;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.vr__mediaprev {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vr__mediaprev .vr__thumb {
+  max-height: 160px;
+}
+
 /* primary / ghost buttons */
 .vr__primary {
   width: 100%;
