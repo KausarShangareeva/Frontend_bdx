@@ -1,23 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VoiceReport from "./VoiceReport.jsx";
+import WeatherCard from "../components/WeatherCard.jsx";
 import "./Safety.css";
-
-const ROUTE = {
-  from: "Stockholm",
-  to: "Gävle",
-  now: { city: "Stockholm", temp: 7, cond: "Light rain", icon: "🌦" },
-  stops: [
-    { city: "Stockholm", temp: 7, icon: "🌦" },
-    { city: "Uppsala", temp: 6, icon: "🌧" },
-    { city: "Gävle", temp: 4, icon: "🌨" },
-  ],
-  stats: [
-    { label: "Wind", value: "8 m/s" },
-    { label: "Visibility", value: "6 km" },
-    { label: "Road", value: "Wet" },
-  ],
-};
 
 // Truck parts → each carries its own safety check
 const PARTS = {
@@ -306,7 +291,12 @@ function Safety() {
             Tap a glowing part of the truck
           </span>
 
-          <svg className="truck" viewBox="0 0 440 210" role="group" aria-label="Truck safety map">
+          <svg
+            className="truck"
+            viewBox="0 0 440 210"
+            role="group"
+            aria-label="Truck safety map"
+          >
             <defs>
               <linearGradient id="gHigh" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stopColor="#cf5a52" />
@@ -335,50 +325,170 @@ function Safety() {
             </defs>
 
             {/* ground shadow */}
-            <ellipse cx="220" cy="191" rx="166" ry="9" fill="rgba(0,0,0,0.07)" />
+            <ellipse
+              cx="220"
+              cy="191"
+              rx="166"
+              ry="9"
+              fill="rgba(0,0,0,0.07)"
+            />
 
             {/* exhaust stack */}
             <rect x="256" y="84" width="7" height="66" rx="3" fill="#2b313a" />
             <rect x="252" y="80" width="15" height="8" rx="2" fill="#3c434e" />
 
             {/* tipper bed */}
-            <g {...partProps('bed')}>
-              <polygon points="76,146 256,146 248,92 100,92" fill="url(#gHigh)" stroke="#8a2c28" strokeWidth="1.5" strokeLinejoin="round" />
-              <rect x="98" y="86" width="152" height="9" rx="3" fill="#8a2c28" />
-              <line x1="138" y1="99" x2="138" y2="142" stroke="#7e2a26" strokeWidth="2" opacity="0.4" />
-              <line x1="176" y1="99" x2="176" y2="142" stroke="#7e2a26" strokeWidth="2" opacity="0.4" />
-              <line x1="214" y1="99" x2="214" y2="142" stroke="#7e2a26" strokeWidth="2" opacity="0.4" />
+            <g {...partProps("bed")}>
+              <polygon
+                points="76,146 256,146 248,92 100,92"
+                fill="url(#gHigh)"
+                stroke="#8a2c28"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <rect
+                x="98"
+                y="86"
+                width="152"
+                height="9"
+                rx="3"
+                fill="#8a2c28"
+              />
+              <line
+                x1="138"
+                y1="99"
+                x2="138"
+                y2="142"
+                stroke="#7e2a26"
+                strokeWidth="2"
+                opacity="0.4"
+              />
+              <line
+                x1="176"
+                y1="99"
+                x2="176"
+                y2="142"
+                stroke="#7e2a26"
+                strokeWidth="2"
+                opacity="0.4"
+              />
+              <line
+                x1="214"
+                y1="99"
+                x2="214"
+                y2="142"
+                stroke="#7e2a26"
+                strokeWidth="2"
+                opacity="0.4"
+              />
             </g>
 
             {/* load / straps */}
-            <g {...partProps('load')}>
-              <rect x="112" y="62" width="140" height="30" rx="7" fill="url(#gLoad)" />
-              <rect x="146" y="59" width="7" height="36" rx="2" fill="#3a1714" opacity="0.7" />
-              <rect x="212" y="59" width="7" height="36" rx="2" fill="#3a1714" opacity="0.7" />
+            <g {...partProps("load")}>
+              <rect
+                x="112"
+                y="62"
+                width="140"
+                height="30"
+                rx="7"
+                fill="url(#gLoad)"
+              />
+              <rect
+                x="146"
+                y="59"
+                width="7"
+                height="36"
+                rx="2"
+                fill="#3a1714"
+                opacity="0.7"
+              />
+              <rect
+                x="212"
+                y="59"
+                width="7"
+                height="36"
+                rx="2"
+                fill="#3a1714"
+                opacity="0.7"
+              />
             </g>
 
             {/* chassis */}
-            <rect x="60" y="146" width="292" height="15" rx="4" fill="url(#gSteel)" />
+            <rect
+              x="60"
+              y="146"
+              width="292"
+              height="15"
+              rx="4"
+              fill="url(#gSteel)"
+            />
             <rect x="60" y="158" width="292" height="4" rx="2" fill="#15181d" />
 
             {/* cabin */}
-            <g {...partProps('cabin')}>
-              <path d="M268 161 V118 a12 12 0 0 1 12-12 h40 a10 10 0 0 1 10 10 v45 Z" fill="url(#gMed)" stroke="#8f6a1c" strokeWidth="1.5" strokeLinejoin="round" />
-              <path d="M304 112 h16 a8 8 0 0 1 8 8 v16 h-24 Z" fill="url(#gGlass)" />
-              <line x1="290" y1="120" x2="290" y2="158" stroke="#8f6a1c" strokeWidth="2" opacity="0.5" />
-              <rect x="295" y="138" width="9" height="3" rx="1.5" fill="#6e5215" />
-              <rect x="330" y="150" width="6" height="9" rx="2" fill="#ffe08a" />
+            <g {...partProps("cabin")}>
+              <path
+                d="M268 161 V118 a12 12 0 0 1 12-12 h40 a10 10 0 0 1 10 10 v45 Z"
+                fill="url(#gMed)"
+                stroke="#8f6a1c"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M304 112 h16 a8 8 0 0 1 8 8 v16 h-24 Z"
+                fill="url(#gGlass)"
+              />
+              <line
+                x1="290"
+                y1="120"
+                x2="290"
+                y2="158"
+                stroke="#8f6a1c"
+                strokeWidth="2"
+                opacity="0.5"
+              />
+              <rect
+                x="295"
+                y="138"
+                width="9"
+                height="3"
+                rx="1.5"
+                fill="#6e5215"
+              />
+              <rect
+                x="330"
+                y="150"
+                width="6"
+                height="9"
+                rx="2"
+                fill="#ffe08a"
+              />
             </g>
 
             {/* wheels / steps */}
-            <g {...partProps('wheels')}>
+            <g {...partProps("wheels")}>
               <circle cx="120" cy="164" r="29" fill="#15181d" />
-              <circle cx="120" cy="164" r="29" fill="none" stroke="#2f9e6a" strokeWidth="2.5" opacity="0.55" />
+              <circle
+                cx="120"
+                cy="164"
+                r="29"
+                fill="none"
+                stroke="#2f9e6a"
+                strokeWidth="2.5"
+                opacity="0.55"
+              />
               <circle cx="120" cy="164" r="20" fill="#23282f" />
               <circle cx="120" cy="164" r="12" fill="url(#gHub)" />
               <circle cx="120" cy="164" r="3.5" fill="#5f656d" />
               <circle cx="300" cy="164" r="29" fill="#15181d" />
-              <circle cx="300" cy="164" r="29" fill="none" stroke="#2f9e6a" strokeWidth="2.5" opacity="0.55" />
+              <circle
+                cx="300"
+                cy="164"
+                r="29"
+                fill="none"
+                stroke="#2f9e6a"
+                strokeWidth="2.5"
+                opacity="0.55"
+              />
               <circle cx="300" cy="164" r="20" fill="#23282f" />
               <circle cx="300" cy="164" r="12" fill="url(#gHub)" />
               <circle cx="300" cy="164" r="3.5" fill="#5f656d" />
@@ -436,44 +546,7 @@ function Safety() {
         )}
 
         {/* Weather mini-dashboard along the driver's route */}
-        <section className="wcard" aria-label="Weather along route">
-          <div className="wcard__head">
-            <div>
-              <span className="wcard__eyebrow">Weather along route</span>
-              <div className="wcard__route">
-                {ROUTE.from} <span className="wcard__arrow">→</span> {ROUTE.to}
-              </div>
-            </div>
-          </div>
-
-          <div className="wcard__now">
-            <span className="wcard__nowicon">{ROUTE.now.icon}</span>
-            <span className="wcard__temp">{ROUTE.now.temp}°</span>
-            <div className="wcard__meta">
-              <span className="wcard__cond">{ROUTE.now.cond}</span>
-              <span className="wcard__city">{ROUTE.now.city} · now</span>
-            </div>
-          </div>
-
-          <div className="wcard__stops">
-            {ROUTE.stops.map((s) => (
-              <div className="stop" key={s.city}>
-                <span className="stop__icon">{s.icon}</span>
-                <span className="stop__temp">{s.temp}°</span>
-                <span className="stop__city">{s.city}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="wcard__stats">
-            {ROUTE.stats.map((st) => (
-              <div className="stat" key={st.label}>
-                <span className="stat__value">{st.value}</span>
-                <span className="stat__label">{st.label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <WeatherCard />
 
         {/* Damage report — opens action sheet */}
         <button
@@ -487,7 +560,7 @@ function Safety() {
             <CameraIcon />
           </span>
           <span className="action__text">
-            <span className="action__title">Damage Report</span>
+            <span className="action__title">Report Damage</span>
             <span className="action__sub">Voice, photo or video</span>
           </span>
           <span className="action__chev" aria-hidden="true">
@@ -529,7 +602,7 @@ function Safety() {
                       →
                     </span>
                   </>
-                )
+                );
                 return (
                   <li key={id}>
                     {accept ? (
@@ -539,17 +612,23 @@ function Safety() {
                           className="opt__file"
                           accept={accept}
                           capture="environment"
-                          onChange={(e) => onPickMedia(e, id === 'video' ? 'video' : 'photo')}
+                          onChange={(e) =>
+                            onPickMedia(e, id === "video" ? "video" : "photo")
+                          }
                         />
                         {inner}
                       </label>
                     ) : (
-                      <button type="button" className="opt" onClick={() => openVoice(null)}>
+                      <button
+                        type="button"
+                        className="opt"
+                        onClick={() => openVoice(null)}
+                      >
                         {inner}
                       </button>
                     )}
                   </li>
-                )
+                );
               })}
             </ul>
 
@@ -564,7 +643,11 @@ function Safety() {
         </div>
       )}
 
-      <VoiceReport open={voiceOpen} media={media} onClose={() => setVoiceOpen(false)} />
+      <VoiceReport
+        open={voiceOpen}
+        media={media}
+        onClose={() => setVoiceOpen(false)}
+      />
     </div>
   );
 }
