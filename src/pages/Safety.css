@@ -141,13 +141,13 @@
   animation: partGlow 2.4s ease-in-out infinite;
 }
 .part--low {
-  --glow: #2fb67d;
+  --glow: #2f9e6a;
 }
 .part--medium {
-  --glow: #e7b53f;
+  --glow: #d8ab4a;
 }
 .part--high {
-  --glow: #e0455e;
+  --glow: #cf5a52;
 }
 .part:nth-of-type(2) {
   animation-delay: 0.6s;
@@ -197,13 +197,13 @@
   margin-right: 7px;
 }
 .dot--low {
-  background: #2fb67d;
+  background: #2f9e6a;
 }
 .dot--medium {
-  background: #e7b53f;
+  background: #d8ab4a;
 }
 .dot--high {
-  background: #e0455e;
+  background: #cf5a52;
 }
 
 /* safety check panel */
@@ -378,25 +378,6 @@
   color: #ca0d38;
   margin: 0 4px;
 }
-.wcard__refresh {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  background: #fff;
-  color: var(--green);
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.3s ease;
-}
-.wcard__refresh:hover {
-  background: #f2f6f0;
-  transform: rotate(90deg);
-}
-
 /* current conditions */
 .wcard__now {
   display: flex;
