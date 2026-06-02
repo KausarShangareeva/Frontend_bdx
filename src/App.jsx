@@ -1,26 +1,16 @@
-import "./App.css";
+import { Routes, Route } from 'react-router-dom'
+import Hero from './pages/Hero.jsx'
+import Training from './pages/Training.jsx'
+import Safety from './pages/Safety.jsx'
 
 function App() {
   return (
-    <div className="app">
-      <h1>BDX Safety Assistant</h1>
-      <p>Welcome Operator 👋</p>
-
-      <div className="machine-card">
-        🚜
-        <br />
-        3D Machine
-      </div>
-
-      <button>▶ Watch Instruction</button>
-
-      <div className="card">👁 Inspection Points</div>
-
-      <div className="card">🌦 Weather Report</div>
-
-      <div className="card">📸 Damage Report</div>
-    </div>
-  );
+    <Routes>
+      <Route path="/" element={<Hero />} />
+      <Route path="/training" element={<Training />} />
+      <Route path="/safety" element={<Safety />} />
+    </Routes>
+  )
 }
 
-export default App;
+export default App
