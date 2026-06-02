@@ -1,0 +1,40 @@
+.safety {
+  max-width: 390px;
+  margin: auto;
+  min-height: 100vh;
+  padding: 20px;
+  background: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.safety__title {
+  text-align: center;
+}
+
+.safety .machine-card {
+  height: 250px;
+  background: white;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.safety__btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background: #e30613;
+  color: white;
+  font-size: 16px;
+}
+
+.safety .card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
