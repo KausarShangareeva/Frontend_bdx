@@ -4,9 +4,9 @@
   font-family: 'Montserrat', system-ui, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
 
-  --cream: #ece2a0;
-  --cream-hover: #f2e9b4;
-  --accent: #e6d589;
+  --green: #1f4d36;
+  --green-hover: #285f43;
+  --lime: #b6d335;
   --ink: #15171c;
 }
 
@@ -16,6 +16,6 @@
 
 body {
   margin: 0;
-  color: #fff;
-  background: #07070b;
+  color: var(--ink);
+  background: #fff;
 }
