@@ -1,6 +1,13 @@
+@import './fonts.css';
+
 :root {
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Montserrat', system-ui, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
+
+  --cream: #ece2a0;
+  --cream-hover: #f2e9b4;
+  --accent: #e6d589;
+  --ink: #15171c;
 }
 
 * {
@@ -9,4 +16,6 @@
 
 body {
   margin: 0;
+  color: #fff;
+  background: #07070b;
 }
