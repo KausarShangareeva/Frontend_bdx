@@ -23,15 +23,10 @@ function CameraIcon() {
 
 function Hero() {
   const navigate = useNavigate();
-  const goTraining = () => navigate("/training");
+  const goTraining = () => navigate("/safety");
 
   return (
     <div className="hero">
-      <span className="corner corner--tl" aria-hidden="true" />
-      <span className="corner corner--tr" aria-hidden="true" />
-      <span className="corner corner--bl" aria-hidden="true" />
-      <span className="corner corner--br" aria-hidden="true" />
-
       <header className="hero__bar">
         <div className="brand">
           <img className="brand__logo" src="/bdx_svg.svg" alt="BDX" />
