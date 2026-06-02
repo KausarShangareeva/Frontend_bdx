@@ -207,39 +207,82 @@ function Safety() {
           </button>
           <span className="machine-card__hint">Tap a glowing part of the truck</span>
 
-          <svg className="truck" viewBox="0 0 420 200" role="group" aria-label="Truck safety map">
-            {/* ground */}
-            <line x1="36" y1="178" x2="372" y2="178" stroke="rgba(0,0,0,0.12)" strokeWidth="2" />
+          <svg className="truck" viewBox="0 0 440 210" role="group" aria-label="Truck safety map">
+            <defs>
+              <linearGradient id="gHigh" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#cf5a52" />
+                <stop offset="1" stopColor="#9c322d" />
+              </linearGradient>
+              <linearGradient id="gLoad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#b5403a" />
+                <stop offset="1" stopColor="#7e2a26" />
+              </linearGradient>
+              <linearGradient id="gMed" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#d8ab4a" />
+                <stop offset="1" stopColor="#a87d22" />
+              </linearGradient>
+              <linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#3c434e" />
+                <stop offset="1" stopColor="#1f242c" />
+              </linearGradient>
+              <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="#d4e4ee" />
+                <stop offset="1" stopColor="#92acbb" />
+              </linearGradient>
+              <radialGradient id="gHub" cx="0.4" cy="0.4" r="0.7">
+                <stop offset="0" stopColor="#dde1e5" />
+                <stop offset="1" stopColor="#878e96" />
+              </radialGradient>
+            </defs>
+
+            {/* ground shadow */}
+            <ellipse cx="220" cy="191" rx="166" ry="9" fill="rgba(0,0,0,0.07)" />
+
+            {/* exhaust stack */}
+            <rect x="256" y="84" width="7" height="66" rx="3" fill="#2b313a" />
+            <rect x="252" y="80" width="15" height="8" rx="2" fill="#3c434e" />
 
             {/* tipper bed */}
             <g {...partProps('bed')}>
-              <polygon points="70,150 92,82 236,82 252,150" fill="#c9913a" />
+              <polygon points="76,146 256,146 248,92 100,92" fill="url(#gHigh)" stroke="#8a2c28" strokeWidth="1.5" strokeLinejoin="round" />
+              <rect x="98" y="86" width="152" height="9" rx="3" fill="#8a2c28" />
+              <line x1="138" y1="99" x2="138" y2="142" stroke="#7e2a26" strokeWidth="2" opacity="0.4" />
+              <line x1="176" y1="99" x2="176" y2="142" stroke="#7e2a26" strokeWidth="2" opacity="0.4" />
+              <line x1="214" y1="99" x2="214" y2="142" stroke="#7e2a26" strokeWidth="2" opacity="0.4" />
             </g>
 
             {/* load / straps */}
             <g {...partProps('load')}>
-              <rect x="100" y="62" width="124" height="24" rx="5" fill="#d24b63" />
-              <line x1="124" y1="62" x2="124" y2="86" stroke="rgba(0,0,0,0.35)" strokeWidth="3" />
-              <line x1="200" y1="62" x2="200" y2="86" stroke="rgba(0,0,0,0.35)" strokeWidth="3" />
+              <rect x="112" y="62" width="140" height="30" rx="7" fill="url(#gLoad)" />
+              <rect x="146" y="59" width="7" height="36" rx="2" fill="#3a1714" opacity="0.7" />
+              <rect x="212" y="59" width="7" height="36" rx="2" fill="#3a1714" opacity="0.7" />
             </g>
 
             {/* chassis */}
-            <rect x="50" y="150" width="276" height="15" rx="3" fill="#2c313a" />
+            <rect x="60" y="146" width="292" height="15" rx="4" fill="url(#gSteel)" />
+            <rect x="60" y="158" width="292" height="4" rx="2" fill="#15181d" />
 
             {/* cabin */}
             <g {...partProps('cabin')}>
-              <path d="M258 104h54a8 8 0 0 1 8 8v38h-62v-38a8 8 0 0 1 0-8Z" fill="#e3b545" />
-              <rect x="300" y="112" width="15" height="20" rx="3" fill="#cdd6dd" />
+              <path d="M268 161 V118 a12 12 0 0 1 12-12 h40 a10 10 0 0 1 10 10 v45 Z" fill="url(#gMed)" stroke="#8f6a1c" strokeWidth="1.5" strokeLinejoin="round" />
+              <path d="M304 112 h16 a8 8 0 0 1 8 8 v16 h-24 Z" fill="url(#gGlass)" />
+              <line x1="290" y1="120" x2="290" y2="158" stroke="#8f6a1c" strokeWidth="2" opacity="0.5" />
+              <rect x="295" y="138" width="9" height="3" rx="1.5" fill="#6e5215" />
+              <rect x="330" y="150" width="6" height="9" rx="2" fill="#ffe08a" />
             </g>
 
             {/* wheels / steps */}
             <g {...partProps('wheels')}>
-              <circle cx="110" cy="166" r="25" fill="#2c313a" />
-              <circle cx="110" cy="166" r="25" fill="none" stroke="#2fb67d" strokeWidth="4" />
-              <circle cx="110" cy="166" r="9" fill="#aeb6bd" />
-              <circle cx="282" cy="166" r="25" fill="#2c313a" />
-              <circle cx="282" cy="166" r="25" fill="none" stroke="#2fb67d" strokeWidth="4" />
-              <circle cx="282" cy="166" r="9" fill="#aeb6bd" />
+              <circle cx="120" cy="164" r="29" fill="#15181d" />
+              <circle cx="120" cy="164" r="29" fill="none" stroke="#2f9e6a" strokeWidth="2.5" opacity="0.55" />
+              <circle cx="120" cy="164" r="20" fill="#23282f" />
+              <circle cx="120" cy="164" r="12" fill="url(#gHub)" />
+              <circle cx="120" cy="164" r="3.5" fill="#5f656d" />
+              <circle cx="300" cy="164" r="29" fill="#15181d" />
+              <circle cx="300" cy="164" r="29" fill="none" stroke="#2f9e6a" strokeWidth="2.5" opacity="0.55" />
+              <circle cx="300" cy="164" r="20" fill="#23282f" />
+              <circle cx="300" cy="164" r="12" fill="url(#gHub)" />
+              <circle cx="300" cy="164" r="3.5" fill="#5f656d" />
             </g>
           </svg>
 
@@ -298,9 +341,6 @@ function Safety() {
                 {ROUTE.from} <span className="wcard__arrow">→</span> {ROUTE.to}
               </div>
             </div>
-            <button type="button" className="wcard__refresh" aria-label="Refresh">
-              ⟳
-            </button>
           </div>
 
           <div className="wcard__now">
