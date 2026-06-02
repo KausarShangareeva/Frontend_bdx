@@ -434,8 +434,11 @@
   gap: 14px;
 }
 .wcard__nowicon {
-  font-size: 2.6rem;
   line-height: 1;
+}
+.wcard__nowicon svg,
+.stop__icon svg {
+  display: block;
 }
 .wcard__temp {
   font-family: 'Clash Display', sans-serif;

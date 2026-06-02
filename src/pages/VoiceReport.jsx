@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Power, Volume2 } from 'lucide-react'
 import { structureReport, submitReport } from '../api'
 import './VoiceReport.css'
 
@@ -10,8 +11,22 @@ const FIELDS = [
   { key: 'location', label: 'Location' },
   { key: 'risk_type', label: 'Risk type' },
   { key: 'description', label: 'Description' },
-  { key: 'recommended_action', label: 'Recommended action' },
 ]
+
+// Local sample used only when the backend is unreachable (offline preview).
+function buildMockReport(rawText) {
+  return {
+    hazard: 'Reported hazard',
+    machine: 'unspecified',
+    location: 'unspecified',
+    risk_type: 'General',
+    severity: 'medium',
+    description: rawText,
+    recommended_action: 'Review on site and address before continuing.',
+    missing_info: ['machine id', 'exact location'],
+    timestamp: '',
+  }
+}
 
 function severityClass(sev) {
   const s = String(sev ?? '').toLowerCase()
@@ -30,6 +45,8 @@ function VoiceReport({ open, media = null, onClose }) {
   const [attachment, setAttachment] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [speaking, setSpeaking] = useState(false)
   const recognitionRef = useRef(null)
 
   const SR =
@@ -60,13 +77,26 @@ function VoiceReport({ open, media = null, onClose }) {
     setResult(null)
     setAttachment(null)
     setError('')
+    setNotice('')
     setLoading(false)
+    window.speechSynthesis?.cancel()
+    setSpeaking(false)
   }, [open])
 
   // when opened, pick up any media passed in from the action sheet
   useEffect(() => {
     if (open) setAttachment(media ?? null)
   }, [open, media])
+
+  // warm up TTS voices (they load asynchronously)
+  useEffect(() => {
+    const synth = window.speechSynthesis
+    if (!synth) return
+    synth.getVoices()
+    const onVoices = () => synth.getVoices()
+    synth.addEventListener?.('voiceschanged', onVoices)
+    return () => synth.removeEventListener?.('voiceschanged', onVoices)
+  }, [])
 
   // Esc to close + lock background scroll
   useEffect(() => {
@@ -129,11 +159,14 @@ function VoiceReport({ open, media = null, onClose }) {
     setRecording(false)
     setLoading(true)
     setError('')
+    setNotice('')
     try {
       const report = await structureReport(rawText.trim(), lang)
       setStructured(report)
     } catch {
-      setError('Could not reach the report service. Is the backend running?')
+      // Backend unreachable → offline preview so the flow is still demoable
+      setStructured(buildMockReport(rawText.trim()))
+      setNotice('Offline preview — backend not reachable, showing a sample structure.')
     } finally {
       setLoading(false)
     }
@@ -151,24 +184,86 @@ function VoiceReport({ open, media = null, onClose }) {
   const handleSubmit = async () => {
     setLoading(true)
     setError('')
+    setNotice('')
+    const payload = {
+      ...structured,
+      media_url: attachment?.url ?? '',
+      media_type: attachment?.type ?? 'photo',
+    }
     try {
-      const payload = {
-        ...structured,
-        media_url: attachment?.url ?? '',
-        media_type: attachment?.type ?? 'photo',
-      }
       const res = await submitReport(payload)
       setResult(res)
     } catch {
-      setError('Could not submit the report — please retry.')
+      // Backend unreachable → offline preview of the result screen
+      setResult({ ...payload, repeat_count: 1, escalated: false })
+      setNotice('Offline preview — report was not sent (backend not reachable).')
     } finally {
       setLoading(false)
     }
   }
 
+  const toggleSpeak = () => {
+    const synth = window.speechSynthesis
+    if (!synth) return
+    if (speaking) {
+      synth.cancel()
+      setSpeaking(false)
+      return
+    }
+
+    const fullText = [
+      'Safety check.',
+      structured.hazard ? `Hazard: ${structured.hazard}.` : '',
+      structured.severity ? `Severity: ${structured.severity}.` : '',
+      structured.risk_type ? `Risk type: ${structured.risk_type}.` : '',
+      structured.machine && structured.machine !== 'unspecified' ? `Machine: ${structured.machine}.` : '',
+      structured.location && structured.location !== 'unspecified' ? `Location: ${structured.location}.` : '',
+      structured.description ? `${structured.description}.` : '',
+      structured.recommended_action ? `Recommended action: ${structured.recommended_action}.` : '',
+    ]
+      .filter(Boolean)
+      .join(' ')
+
+    // Split into sentences/short chunks — Chrome silently stops on long
+    // single utterances (~15s), so we queue many short ones instead.
+    const chunks = fullText.match(/[^.!?]+[.!?]*/g)?.map((s) => s.trim()).filter(Boolean) || [fullText]
+
+    const voices = synth.getVoices()
+    const want = LANG_CODES[lang].toLowerCase()
+    const voice =
+      voices.find((v) => v.lang?.toLowerCase() === want) ||
+      voices.find((v) => v.lang?.toLowerCase().startsWith(lang))
+
+    synth.cancel()
+    setSpeaking(true)
+
+    let i = 0
+    const speakNext = () => {
+      if (i >= chunks.length) {
+        setSpeaking(false)
+        return
+      }
+      const utter = new SpeechSynthesisUtterance(chunks[i])
+      utter.lang = LANG_CODES[lang]
+      if (voice) utter.voice = voice
+      utter.rate = 0.95
+      utter.pitch = 1
+      utter.onend = () => {
+        i += 1
+        speakNext()
+      }
+      utter.onerror = () => setSpeaking(false)
+      synth.speak(utter)
+    }
+    speakNext()
+  }
+
   const reRecord = () => {
+    window.speechSynthesis?.cancel()
+    setSpeaking(false)
     setStructured(null)
     setError('')
+    setNotice('')
   }
 
   if (!open) return null
@@ -189,6 +284,7 @@ function VoiceReport({ open, media = null, onClose }) {
 
         <div className="vr__body">
           {error && <p className="vr__error">{error}</p>}
+          {notice && <p className="vr__notice">{notice}</p>}
 
           {/* STEP 1 — record */}
           {!structured && !result && (
@@ -214,7 +310,7 @@ function VoiceReport({ open, media = null, onClose }) {
                     onClick={recording ? stopRecognition : startRecording}
                     aria-label={recording ? 'Stop recording' : 'Start recording'}
                   >
-                    <MicGlyph />
+                    {recording ? <Power size={34} strokeWidth={2.4} /> : <MicGlyph />}
                   </button>
                   <p className="vr__hint">
                     {recording ? 'Listening… tap to stop' : 'Tap the mic and describe the damage'}
@@ -267,6 +363,17 @@ function VoiceReport({ open, media = null, onClose }) {
                   ) : null,
                 )}
               </dl>
+
+              {structured.recommended_action && (
+                <div className="vr__action-box">
+                  <span className="vr__action-label">Recommended action</span>
+                  <p className="vr__action-text">{structured.recommended_action}</p>
+                  <button type="button" className="vr__listen" onClick={toggleSpeak}>
+                    <Volume2 size={18} strokeWidth={2.2} />
+                    {speaking ? 'Stop' : 'Listen to report'}
+                  </button>
+                </div>
+              )}
 
               {attachment && (
                 <div className="vr__mediaprev">
@@ -354,33 +461,34 @@ function VoiceReport({ open, media = null, onClose }) {
 }
 
 function MediaBlock({ attachment, onAttach, onRemove }) {
-  if (attachment) {
-    return (
-      <div className="vr__media">
-        {attachment.type === 'video' ? (
-          <video className="vr__thumb" src={attachment.url} controls />
-        ) : (
-          <img className="vr__thumb" src={attachment.url} alt="Damage attachment" />
-        )}
-        <span className="vr__medialabel">
-          {attachment.type === 'video' ? '🎥 Video attached' : '📷 Photo attached'}
-        </span>
-        <button type="button" className="vr__mediaremove" onClick={onRemove}>
-          Remove
-        </button>
-      </div>
-    )
-  }
   return (
-    <div className="vr__attach">
-      <label className="vr__attachbtn">
-        <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => onAttach(e, 'photo')} />
-        📷 Add photo
-      </label>
-      <label className="vr__attachbtn">
-        <input type="file" accept="video/*" capture="environment" hidden onChange={(e) => onAttach(e, 'video')} />
-        🎥 Add video
-      </label>
+    <div className="vr__mediablock">
+      {attachment && (
+        <div className="vr__media">
+          {attachment.type === 'video' ? (
+            <video className="vr__thumb" src={attachment.url} controls />
+          ) : (
+            <img className="vr__thumb" src={attachment.url} alt="Damage attachment" />
+          )}
+          <span className="vr__medialabel">
+            {attachment.type === 'video' ? '🎥 Video attached' : '📷 Photo attached'}
+          </span>
+          <button type="button" className="vr__mediaremove" onClick={onRemove}>
+            Remove
+          </button>
+        </div>
+      )}
+
+      <div className="vr__attach">
+        <label className="vr__attachbtn">
+          <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => onAttach(e, 'photo')} />
+          📷 {attachment?.type === 'photo' ? 'Replace photo' : 'Add photo'}
+        </label>
+        <label className="vr__attachbtn">
+          <input type="file" accept="video/*" capture="environment" hidden onChange={(e) => onAttach(e, 'video')} />
+          🎥 {attachment?.type === 'video' ? 'Replace video' : 'Add video'}
+        </label>
+      </div>
     </div>
   )
 }

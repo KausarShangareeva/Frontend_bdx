@@ -283,7 +283,12 @@ function Safety() {
 
         {/* Interactive truck safety map */}
         <div className="machine-card">
-          <button type="button" className="watch">
+          <button
+            type="button"
+            className="watch"
+            disabled
+            aria-label="Watch (coming soon)"
+          >
             <PlayIcon />
             Watch
           </button>
@@ -560,7 +565,7 @@ function Safety() {
             <CameraIcon />
           </span>
           <span className="action__text">
-            <span className="action__title">Report Damage</span>
+            <span className="action__title">Report damage</span>
             <span className="action__sub">Voice, photo or video</span>
           </span>
           <span className="action__chev" aria-hidden="true">
@@ -574,7 +579,7 @@ function Safety() {
           className="sheet"
           role="dialog"
           aria-modal="true"
-          aria-label="Damage report"
+          aria-label="Report damage"
         >
           <button
             type="button"
