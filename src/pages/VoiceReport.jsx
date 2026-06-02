@@ -47,6 +47,7 @@ function VoiceReport({ open, media = null, onClose }) {
       }
       recognitionRef.current = null
     }
+    setRecording(false)
   }
 
   // reset everything whenever the modal closes
@@ -99,11 +100,15 @@ function VoiceReport({ open, media = null, onClose }) {
       setRawText((finalText + interim).trim())
     }
     rec.onerror = (e) => {
-      setError(
-        e.error === 'not-allowed'
-          ? 'Microphone permission denied.'
-          : 'Speech recognition error — try again.',
-      )
+      const messages = {
+        'not-allowed': 'Microphone permission denied — allow it in the browser site settings.',
+        'service-not-allowed': 'Microphone permission denied — allow it in the browser site settings.',
+        network: 'Speech recognition needs an internet connection (audio is processed online).',
+        'no-speech': 'No speech detected — check your microphone is unmuted and try again.',
+        'audio-capture': 'No microphone found — check your input device.',
+        aborted: 'Recording stopped.',
+      }
+      setError(messages[e.error] || `Speech recognition error (${e.error}) — try again.`)
       setRecording(false)
     }
     rec.onend = () => {
