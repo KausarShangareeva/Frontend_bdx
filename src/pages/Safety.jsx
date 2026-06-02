@@ -1,190 +1,287 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import VoiceReport from './VoiceReport.jsx'
-import './Safety.css'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import VoiceReport from "./VoiceReport.jsx";
+import "./Safety.css";
 
 const ROUTE = {
-  from: 'Stockholm',
-  to: 'Gävle',
-  now: { city: 'Stockholm', temp: 7, cond: 'Light rain', icon: '🌦' },
+  from: "Stockholm",
+  to: "Gävle",
+  now: { city: "Stockholm", temp: 7, cond: "Light rain", icon: "🌦" },
   stops: [
-    { city: 'Stockholm', temp: 7, icon: '🌦' },
-    { city: 'Uppsala', temp: 6, icon: '🌧' },
-    { city: 'Gävle', temp: 4, icon: '🌨' },
+    { city: "Stockholm", temp: 7, icon: "🌦" },
+    { city: "Uppsala", temp: 6, icon: "🌧" },
+    { city: "Gävle", temp: 4, icon: "🌨" },
   ],
   stats: [
-    { label: 'Wind', value: '8 m/s' },
-    { label: 'Visibility', value: '6 km' },
-    { label: 'Road', value: 'Wet' },
+    { label: "Wind", value: "8 m/s" },
+    { label: "Visibility", value: "6 km" },
+    { label: "Road", value: "Wet" },
   ],
-}
+};
 
 // Truck parts → each carries its own safety check
 const PARTS = {
   bed: {
-    label: 'Tipper bed',
-    risk: 'high',
-    riskLabel: 'High risk',
+    label: "Tipper bed",
+    risk: "high",
+    riskLabel: "High risk",
     score: 15,
-    question: 'Is the tipper bed fully lowered?',
+    question: "Is the tipper bed fully lowered?",
     points: [
-      'Confirm the bed is all the way down before driving',
-      'If unsure, get out and check it',
-      'Do not drive if it is still raised',
+      "Confirm the bed is all the way down before driving",
+      "If unsure, get out and check it",
+      "Do not drive if it is still raised",
     ],
-    why: 'A raised bed can hit overhead lines or bridges and flip the truck.',
+    why: "A raised bed can hit overhead lines or bridges and flip the truck.",
   },
   load: {
-    label: 'Load / straps',
-    risk: 'high',
-    riskLabel: 'High risk',
+    label: "Load / straps",
+    risk: "high",
+    riskLabel: "High risk",
     score: 12,
-    question: 'Is the load secured with straps?',
+    question: "Is the load secured with straps?",
     points: [
-      'Check all straps are tight and undamaged',
-      'Make sure nothing can shift or fall',
-      'Re-check after the first few minutes of driving',
+      "Check all straps are tight and undamaged",
+      "Make sure nothing can shift or fall",
+      "Re-check after the first few minutes of driving",
     ],
-    why: 'An unsecured load can fall onto the road and cause serious accidents.',
+    why: "An unsecured load can fall onto the road and cause serious accidents.",
   },
   cabin: {
-    label: 'Cabin',
-    risk: 'medium',
-    riskLabel: 'Medium risk',
+    label: "Cabin",
+    risk: "medium",
+    riskLabel: "Medium risk",
     score: 7,
-    question: 'Is the cabin clear and mirrors set?',
+    question: "Is the cabin clear and mirrors set?",
     points: [
-      'Adjust mirrors before moving off',
-      'Remove loose items from the dashboard',
-      'Fasten your seatbelt',
+      "Adjust mirrors before moving off",
+      "Remove loose items from the dashboard",
+      "Fasten your seatbelt",
     ],
-    why: 'Poor visibility and clutter slow your reaction in an emergency.',
+    why: "Poor visibility and clutter slow your reaction in an emergency.",
   },
   wheels: {
-    label: 'Wheels / steps',
-    risk: 'low',
-    riskLabel: 'Low risk',
+    label: "Wheels / steps",
+    risk: "low",
+    riskLabel: "Low risk",
     score: 3,
-    question: 'Are the tyres and steps in good shape?',
+    question: "Are the tyres and steps in good shape?",
     points: [
-      'Check tyre pressure and tread depth',
-      'Look for cuts or bulges in the rubber',
-      'Keep steps clean to avoid slips',
+      "Check tyre pressure and tread depth",
+      "Look for cuts or bulges in the rubber",
+      "Keep steps clean to avoid slips",
     ],
-    why: 'Worn tyres reduce grip and increase stopping distance.',
+    why: "Worn tyres reduce grip and increase stopping distance.",
   },
-}
+};
 
 const REPORT_OPTIONS = [
-  { id: 'voice', title: 'Voice report', sub: 'Dictate hands-free with Siri', icon: MicIcon },
-  { id: 'photo', title: 'Photo', sub: 'Capture a still image of the damage', icon: CameraIcon, accept: 'image/*' },
-  { id: 'video', title: 'Video', sub: 'Film a short clip of the damage', icon: VideoIcon, accept: 'video/*' },
-]
+  {
+    id: "voice",
+    title: "Voice report",
+    sub: "AI converts speech into a structured report",
+    icon: MicIcon,
+  },
+  {
+    id: "photo",
+    title: "Photo",
+    sub: "Capture a still image of the damage",
+    icon: CameraIcon,
+    accept: "image/*",
+  },
+  {
+    id: "video",
+    title: "Video",
+    sub: "Film a short clip of the damage",
+    icon: VideoIcon,
+    accept: "video/*",
+  },
+];
 
 function BackIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
-      <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M15 6l-6 6 6 6"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 
 function PlayIcon() {
   return (
     <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-      <path d="M8 5.5v13a1 1 0 0 0 1.54.84l10-6.5a1 1 0 0 0 0-1.68l-10-6.5A1 1 0 0 0 8 5.5Z" fill="currentColor" />
+      <path
+        d="M8 5.5v13a1 1 0 0 0 1.54.84l10-6.5a1 1 0 0 0 0-1.68l-10-6.5A1 1 0 0 0 8 5.5Z"
+        fill="currentColor"
+      />
     </svg>
-  )
+  );
 }
 
 function ShieldIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
-      <path d="M12 3 5 6v5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <svg
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 3 5 6v5c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 
 function MicIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
-      <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="2" />
-      <path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="9"
+        y="3"
+        width="6"
+        height="11"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="M5 11a7 7 0 0 0 14 0M12 18v3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
-  )
+  );
 }
 
 function CameraIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
-      <path d="M3 8a2 2 0 0 1 2-2h2l1.2-1.6A2 2 0 0 1 11.8 3.6h.4a2 2 0 0 1 1.6.8L15 6h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M3 8a2 2 0 0 1 2-2h2l1.2-1.6A2 2 0 0 1 11.8 3.6h.4a2 2 0 0 1 1.6.8L15 6h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
       <circle cx="12" cy="13" r="3.5" stroke="currentColor" strokeWidth="2" />
     </svg>
-  )
+  );
 }
 
 function VideoIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true">
-      <rect x="3" y="6" width="13" height="12" rx="2.5" stroke="currentColor" strokeWidth="2" />
-      <path d="m16 10 4.3-2.6a.8.8 0 0 1 1.2.7v7.8a.8.8 0 0 1-1.2.7L16 14v-4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="6"
+        width="13"
+        height="12"
+        rx="2.5"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="m16 10 4.3-2.6a.8.8 0 0 1 1.2.7v7.8a.8.8 0 0 1-1.2.7L16 14v-4Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
     </svg>
-  )
+  );
 }
 
 function Safety() {
-  const navigate = useNavigate()
-  const [sheetOpen, setSheetOpen] = useState(false)
-  const [voiceOpen, setVoiceOpen] = useState(false)
-  const [media, setMedia] = useState(null)
-  const [selected, setSelected] = useState(null)
+  const navigate = useNavigate();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [media, setMedia] = useState(null);
+  const [selected, setSelected] = useState(null);
 
   const openVoice = (withMedia = null) => {
-    setMedia(withMedia)
-    setSheetOpen(false)
-    setVoiceOpen(true)
-  }
+    setMedia(withMedia);
+    setSheetOpen(false);
+    setVoiceOpen(true);
+  };
 
   const onPickMedia = (e, type) => {
-    const file = e.target.files?.[0]
-    e.target.value = ''
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => openVoice({ url: reader.result, type })
-    reader.readAsDataURL(file)
-  }
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => openVoice({ url: reader.result, type });
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
-    if (!sheetOpen) return
-    const onKey = (e) => e.key === 'Escape' && setSheetOpen(false)
-    document.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
+    if (!sheetOpen) return;
+    const onKey = (e) => e.key === "Escape" && setSheetOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
-    }
-  }, [sheetOpen])
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [sheetOpen]);
 
-  const part = selected ? PARTS[selected] : null
+  const part = selected ? PARTS[selected] : null;
 
   const partProps = (id) => ({
-    className: `part part--${PARTS[id].risk}${selected === id ? ' is-selected' : ''}`,
-    role: 'button',
+    className: `part part--${PARTS[id].risk}${selected === id ? " is-selected" : ""}`,
+    role: "button",
     tabIndex: 0,
-    'aria-label': `${PARTS[id].label} — ${PARTS[id].riskLabel}`,
+    "aria-label": `${PARTS[id].label} — ${PARTS[id].riskLabel}`,
     onClick: () => setSelected(id),
     onKeyDown: (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        setSelected(id)
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setSelected(id);
       }
     },
-  })
+  });
 
   return (
     <div className="safety">
       <header className="safety__bar">
-        <button type="button" className="back" onClick={() => navigate('/')} aria-label="Back">
+        <button
+          type="button"
+          className="back"
+          onClick={() => navigate("/")}
+          aria-label="Back"
+        >
           <BackIcon />
         </button>
         <div className="brand">
@@ -205,7 +302,9 @@ function Safety() {
             <PlayIcon />
             Watch
           </button>
-          <span className="machine-card__hint">Tap a glowing part of the truck</span>
+          <span className="machine-card__hint">
+            Tap a glowing part of the truck
+          </span>
 
           <svg className="truck" viewBox="0 0 440 210" role="group" aria-label="Truck safety map">
             <defs>
@@ -326,7 +425,11 @@ function Safety() {
             <p className="check__why">
               <strong>Why:</strong> {part.why}
             </p>
-            <button type="button" className="check__confirm" onClick={() => setSelected(null)}>
+            <button
+              type="button"
+              className="check__confirm"
+              onClick={() => setSelected(null)}
+            >
               ✓ Confirm checked
             </button>
           </section>
@@ -394,7 +497,12 @@ function Safety() {
       </main>
 
       {sheetOpen && (
-        <div className="sheet" role="dialog" aria-modal="true" aria-label="Damage report">
+        <div
+          className="sheet"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Damage report"
+        >
           <button
             type="button"
             className="sheet__backdrop"
@@ -445,7 +553,11 @@ function Safety() {
               })}
             </ul>
 
-            <button type="button" className="sheet__cancel" onClick={() => setSheetOpen(false)}>
+            <button
+              type="button"
+              className="sheet__cancel"
+              onClick={() => setSheetOpen(false)}
+            >
               Cancel
             </button>
           </div>
@@ -454,7 +566,7 @@ function Safety() {
 
       <VoiceReport open={voiceOpen} media={media} onClose={() => setVoiceOpen(false)} />
     </div>
-  )
+  );
 }
 
-export default Safety
+export default Safety;
