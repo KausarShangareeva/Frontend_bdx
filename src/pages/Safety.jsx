@@ -1,23 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VoiceReport from "./VoiceReport.jsx";
+import WeatherCard from "../components/WeatherCard.jsx";
 import "./Safety.css";
-
-const ROUTE = {
-  from: "Stockholm",
-  to: "Gävle",
-  now: { city: "Stockholm", temp: 7, cond: "Light rain", icon: "lightrain" },
-  stops: [
-    { city: "Stockholm", temp: 7, icon: "lightrain" },
-    { city: "Uppsala", temp: 6, icon: "rain" },
-    { city: "Gävle", temp: 4, icon: "snow" },
-  ],
-  stats: [
-    { label: "Wind", value: "8 m/s" },
-    { label: "Visibility", value: "6 km" },
-    { label: "Road", value: "Wet" },
-  ],
-};
 
 // Truck parts → each carries its own safety check
 const PARTS = {
@@ -220,57 +205,6 @@ function VideoIcon() {
         strokeWidth="2"
         strokeLinejoin="round"
       />
-    </svg>
-  );
-}
-
-function WeatherIcon({ type, size = 40 }) {
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      {type === "lightrain" && (
-        <g>
-          <g stroke="#f4a93b" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="48" y1="4" x2="48" y2="9" />
-            <line x1="60" y1="16" x2="55" y2="16" />
-            <line x1="57" y1="7" x2="53" y2="11" />
-            <line x1="39" y1="7" x2="43" y2="11" />
-          </g>
-          <circle cx="48" cy="16" r="8" fill="#f7c948" />
-        </g>
-      )}
-      {/* cloud */}
-      <g>
-        <ellipse cx="34" cy="40" rx="20" ry="13" fill="#c3ccd5" />
-        <circle cx="24" cy="34" r="11" fill="#dbe3ea" />
-        <circle cx="39" cy="29" r="14" fill="#dbe3ea" />
-        <circle cx="47" cy="37" r="9" fill="#dbe3ea" />
-        <rect x="19" y="33" width="32" height="14" rx="7" fill="#dbe3ea" />
-      </g>
-      {/* precipitation */}
-      {type === "snow" ? (
-        <g fill="#9cc6ea">
-          <circle cx="26" cy="54" r="2.6" />
-          <circle cx="36" cy="56" r="2.6" />
-          <circle cx="46" cy="54" r="2.6" />
-        </g>
-      ) : type === "rain" ? (
-        <g stroke="#4f93d8" strokeWidth="3.2" strokeLinecap="round">
-          <line x1="28" y1="50" x2="24" y2="58" />
-          <line x1="38" y1="50" x2="34" y2="58" />
-          <line x1="48" y1="50" x2="44" y2="58" />
-        </g>
-      ) : (
-        <g stroke="#4f93d8" strokeWidth="3.2" strokeLinecap="round">
-          <line x1="31" y1="50" x2="27" y2="58" />
-          <line x1="43" y1="50" x2="39" y2="58" />
-        </g>
-      )}
     </svg>
   );
 }
@@ -617,49 +551,7 @@ function Safety() {
         )}
 
         {/* Weather mini-dashboard along the driver's route */}
-        <section className="wcard" aria-label="Weather along route">
-          <div className="wcard__head">
-            <div>
-              <span className="wcard__eyebrow">Weather along route</span>
-              <div className="wcard__route">
-                <span className="wcard__pin"></span> {ROUTE.from}{" "}
-                <span className="wcard__arrow">→</span> {ROUTE.to}
-              </div>
-            </div>
-          </div>
-
-          <div className="wcard__now">
-            <span className="wcard__nowicon">
-              <WeatherIcon type={ROUTE.now.icon} size={52} />
-            </span>
-            <span className="wcard__temp">{ROUTE.now.temp}°</span>
-            <div className="wcard__meta">
-              <span className="wcard__cond">{ROUTE.now.cond}</span>
-              <span className="wcard__city">{ROUTE.now.city} · now</span>
-            </div>
-          </div>
-
-          <div className="wcard__stops">
-            {ROUTE.stops.map((s) => (
-              <div className="stop" key={s.city}>
-                <span className="stop__icon">
-                  <WeatherIcon type={s.icon} size={34} />
-                </span>
-                <span className="stop__temp">{s.temp}°</span>
-                <span className="stop__city">{s.city}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="wcard__stats">
-            {ROUTE.stats.map((st) => (
-              <div className="stat" key={st.label}>
-                <span className="stat__value">{st.value}</span>
-                <span className="stat__label">{st.label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <WeatherCard />
 
         {/* Damage report — opens action sheet */}
         <button
