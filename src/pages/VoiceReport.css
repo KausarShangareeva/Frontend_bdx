@@ -1,0 +1,442 @@
+.vr {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.vr__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: rgba(17, 23, 28, 0.5);
+  cursor: pointer;
+  animation: vrFade 0.2s ease;
+}
+.vr__panel {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  max-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -12px 40px rgba(17, 23, 28, 0.22);
+  animation: vrSlide 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* header */
+.vr__head {
+  position: relative;
+  padding: 12px 18px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+.vr__grip {
+  display: block;
+  width: 42px;
+  height: 5px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.16);
+}
+.vr__title {
+  margin: 0;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.vr__close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: #f1f1ef;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.vr__close:hover {
+  background: #e6e6e3;
+}
+
+.vr__body {
+  padding: 18px;
+  overflow-y: auto;
+}
+.vr__error {
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(224, 69, 94, 0.12);
+  color: #c0314a;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ===== record step ===== */
+.vr__record {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.vr__langs {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: #f1f1ef;
+}
+.vr__lang {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.55);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.vr__lang.is-active {
+  background: var(--green);
+  color: var(--lime);
+}
+
+.mic {
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--lime);
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(31, 77, 54, 0.32);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.mic:hover {
+  transform: scale(1.04);
+}
+.mic.is-recording {
+  background: #d24b63;
+  color: #fff;
+  box-shadow: 0 0 0 0 rgba(210, 75, 99, 0.5);
+  animation: micPulse 1.4s ease-out infinite;
+}
+.vr__hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.92rem;
+  color: rgba(0, 0, 0, 0.55);
+}
+.vr__textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--ink);
+  background: #fff;
+}
+.vr__textarea:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+/* media attach / preview */
+.vr__attach {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.vr__attachbtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 13px;
+  border: 1px dashed rgba(0, 0, 0, 0.22);
+  border-radius: 14px;
+  background: #fff;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.vr__attachbtn:hover {
+  border-color: var(--green);
+  background: #f7faf6;
+}
+.vr__media {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  background: #fafafa;
+}
+.vr__thumb {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #000;
+}
+.vr__medialabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.6);
+}
+.vr__mediaremove {
+  border: none;
+  background: none;
+  color: #c0314a;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.vr__mediaprev {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vr__mediaprev .vr__thumb {
+  max-height: 160px;
+}
+
+/* primary / ghost buttons */
+.vr__primary {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 16px;
+  background: var(--green);
+  color: var(--lime);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.vr__primary:hover:not(:disabled) {
+  background: var(--green-hover);
+  transform: translateY(-1px);
+}
+.vr__primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.vr__ghost {
+  flex: none;
+  padding: 15px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.vr__ghost:hover:not(:disabled) {
+  background: #f4f4f2;
+}
+
+/* ===== review step ===== */
+.vr__review {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.vr__sevrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sev {
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.sev--high {
+  background: rgba(224, 69, 94, 0.14);
+  color: #c0314a;
+}
+.sev--medium {
+  background: rgba(231, 181, 63, 0.2);
+  color: #9a7510;
+}
+.sev--low {
+  background: rgba(47, 182, 125, 0.16);
+  color: #1c875a;
+}
+.vr__sevlabel {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.vr__fields,
+.vr__summary {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vr__field dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.42);
+}
+.vr__field dd {
+  margin: 2px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.vr__missing {
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(231, 181, 63, 0.12);
+}
+.vr__missing-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #9a7510;
+}
+.vr__chips {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(154, 117, 16, 0.3);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #8a6a14;
+}
+
+.vr__actions {
+  display: flex;
+  gap: 10px;
+}
+.vr__actions .vr__primary {
+  flex: 1;
+}
+
+/* ===== done step ===== */
+.vr__done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding-top: 8px;
+}
+.vr__success {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(47, 182, 125, 0.16);
+  color: #1c875a;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.vr__escalated {
+  padding: 12px 26px;
+  border-radius: 14px;
+  background: #d24b63;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  box-shadow: 0 10px 24px rgba(210, 75, 99, 0.35);
+  animation: escPulse 1.6s ease-in-out infinite;
+}
+.vr__donetext {
+  margin: 0;
+  font-size: 0.98rem;
+  color: rgba(0, 0, 0, 0.6);
+  max-width: 32ch;
+}
+.vr__summary {
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+}
+.vr__done .vr__primary {
+  margin-top: 4px;
+}
+
+@keyframes vrFade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vrSlide {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes micPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(210, 75, 99, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(210, 75, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(210, 75, 99, 0);
+  }
+}
+@keyframes escPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vr__backdrop,
+  .vr__panel,
+  .mic.is-recording,
+  .vr__escalated {
+    animation: none;
+  }
+}
