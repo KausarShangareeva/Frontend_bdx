@@ -333,21 +333,16 @@
   padding: 9px 16px 9px 13px;
   border: none;
   border-radius: 999px;
-  background: var(--green);
-  color: var(--lime);
+  background: #e7e7e4;
+  color: #9a9a96;
   font-family: inherit;
   font-weight: 700;
   font-size: 0.9rem;
-  cursor: pointer;
-  box-shadow: 0 8px 18px rgba(31, 77, 54, 0.28);
-  transition: background 0.2s ease, transform 0.2s ease;
+  cursor: not-allowed;
+  transition: background 0.2s ease;
 }
 .watch svg {
   display: block;
-}
-.watch:hover {
-  background: var(--green-hover);
-  transform: translateY(-1px);
 }
 
 /* ===== weather mini-dashboard ===== */
@@ -385,8 +380,11 @@
   gap: 14px;
 }
 .wcard__nowicon {
-  font-size: 2.6rem;
   line-height: 1;
+}
+.wcard__nowicon svg,
+.stop__icon svg {
+  display: block;
 }
 .wcard__temp {
   font-family: 'Clash Display', sans-serif;

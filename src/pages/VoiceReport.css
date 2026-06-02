@@ -81,6 +81,15 @@
   font-size: 0.9rem;
   font-weight: 600;
 }
+.vr__notice {
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(216, 171, 74, 0.16);
+  color: #8a6a14;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
 
 /* ===== record step ===== */
 .vr__record {
@@ -158,6 +167,12 @@
 }
 
 /* media attach / preview */
+.vr__mediablock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .vr__attach {
   display: flex;
   gap: 10px;
@@ -165,17 +180,20 @@
 }
 .vr__attachbtn {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 13px;
+  gap: 8px;
+  padding: 14px 10px;
   border: 1px dashed rgba(0, 0, 0, 0.22);
   border-radius: 14px;
   background: #fff;
   font-family: inherit;
   font-weight: 600;
   font-size: 0.9rem;
+  line-height: 1;
+  white-space: nowrap;
   color: rgba(0, 0, 0, 0.6);
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -318,6 +336,53 @@
   font-size: 0.98rem;
   line-height: 1.4;
   color: var(--ink);
+}
+
+/* recommended action box + read-aloud */
+.vr__action-box {
+  padding: 16px;
+  border-radius: 16px;
+  background: #f1f6f1;
+  border: 1px solid rgba(31, 77, 54, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vr__action-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.vr__action-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.vr__listen {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--lime);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.vr__listen:hover {
+  background: var(--green-hover);
+  transform: translateY(-1px);
+}
+.vr__listen svg {
+  display: block;
 }
 
 .vr__missing {
